@@ -57,8 +57,8 @@ module.exports = function() {
       var start = Date.now();
       while (Date.now() - start < timeInterval && ++i < n && timer) {
         var d = data[i];
-        d.x = (size[0] * (random() + .5)) >> 1;
-        d.y = (size[1] * (random() + .5)) >> 1;
+        d.x = (size[0] * (random(d.text) + .5)) >> 1;
+        d.y = (size[1] * (random(d.text + 'rnd') + .5)) >> 1;
         cloudSprite(contextAndRatio, d, data, i);
         if (d.hasText && place(board, d, bounds)) {
           tags.push(d);
@@ -104,7 +104,7 @@ module.exports = function() {
         startY = tag.y,
         maxDelta = Math.sqrt(size[0] * size[0] + size[1] * size[1]),
         s = spiral(size),
-        dt = random() < .5 ? 1 : -1,
+        dt = Math.random() < .5 ? 1 : -1,
         t = -dt,
         dxdy,
         dx,
@@ -193,7 +193,7 @@ module.exports = function() {
   };
 
   cloud.random = function(_) {
-    return arguments.length ? (random = _, cloud) : random;
+    return arguments.length ? (random = functor(_), cloud) : random;
   };
 
   cloud.on = function() {

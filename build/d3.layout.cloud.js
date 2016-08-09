@@ -58,8 +58,8 @@ module.exports = function() {
       var start = Date.now();
       while (Date.now() - start < timeInterval && ++i < n && timer) {
         var d = data[i];
-        d.x = (size[0] * (random() + .5)) >> 1;
-        d.y = (size[1] * (random() + .5)) >> 1;
+        d.x = (size[0] * (random(d.text) + .5)) >> 1;
+        d.y = (size[1] * (random(d.text + 'rnd') + .5)) >> 1;
         cloudSprite(contextAndRatio, d, data, i);
         if (d.hasText && place(board, d, bounds)) {
           tags.push(d);
@@ -105,7 +105,7 @@ module.exports = function() {
         startY = tag.y,
         maxDelta = Math.sqrt(size[0] * size[0] + size[1] * size[1]),
         s = spiral(size),
-        dt = random() < .5 ? 1 : -1,
+        dt = Math.random() < .5 ? 1 : -1,
         t = -dt,
         dxdy,
         dx,
@@ -194,7 +194,7 @@ module.exports = function() {
   };
 
   cloud.random = function(_) {
-    return arguments.length ? (random = _, cloud) : random;
+    return arguments.length ? (random = functor(_), cloud) : random;
   };
 
   cloud.on = function() {
@@ -403,8 +403,12 @@ var spirals = {
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  factory((global.dispatch = {}));
+  (factory((global.d3_dispatch = {})));
 }(this, function (exports) { 'use strict';
+
+  function dispatch() {
+    return new Dispatch(arguments);
+  }
 
   function Dispatch(types) {
     var i = -1,
@@ -449,7 +453,8 @@ var spirals = {
         for (var otherType in callbacksByType) {
           if (callback = callbackByName[otherType + type.name]) {
             callback.value = null;
-            var callbacks = callbacksByType[otherType], i = callbacks.indexOf(callback);
+            callbacks = callbacksByType[otherType];
+            i = callbacks.indexOf(callback);
             callbacksByType[otherType] = callbacks.slice(0, i).concat(callbacks.slice(i + 1));
             delete callbackByName[callback.name];
           }
@@ -476,13 +481,12 @@ var spirals = {
     function applier(type) {
       return function() {
         var callbacks = callbacksByType[type], // Defensive reference; copy-on-remove.
-            callback,
             callbackValue,
             i = -1,
             n = callbacks.length;
 
         while (++i < n) {
-          if (callbackValue = (callback = callbacks[i]).value) {
+          if (callbackValue = callbacks[i].value) {
             callbackValue.apply(this, arguments);
           }
         }
@@ -492,12 +496,11 @@ var spirals = {
     }
   }
 
-  function dispatch() {
-    return new Dispatch(arguments);
-  }
+  dispatch.prototype = Dispatch.prototype;
 
-  dispatch.prototype = Dispatch.prototype; // allow instanceof
+  var version = "0.2.6";
 
+  exports.version = version;
   exports.dispatch = dispatch;
 
 }));
