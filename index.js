@@ -14,6 +14,7 @@ module.exports = function() {
       fontSize = cloudFontSize,
       fontStyle = cloudFontNormal,
       fontWeight = cloudFontNormal,
+      color = cloudColor,
       rotate = cloudRotate,
       padding = cloudPadding,
       spiral = archimedeanSpiral,
@@ -41,6 +42,7 @@ module.exports = function() {
           d.font = font.call(this, d, i);
           d.style = fontStyle.call(this, d, i);
           d.weight = fontWeight.call(this, d, i);
+          d.color = color.call(this, d, i);
           d.rotate = rotate.call(this, d, i);
           d.size = ~~fontSize.call(this, d, i);
           d.padding = padding.call(this, d, i);
@@ -172,6 +174,10 @@ module.exports = function() {
     return arguments.length ? (fontWeight = functor(_), cloud) : fontWeight;
   };
 
+  cloud.color = function(_) {
+    return arguments.length ? (color = functor(_), cloud) : color;
+  };
+
   cloud.rotate = function(_) {
     return arguments.length ? (rotate = functor(_), cloud) : rotate;
   };
@@ -218,6 +224,10 @@ function cloudFontNormal() {
 
 function cloudFontSize(d) {
   return Math.sqrt(d.value);
+}
+
+function cloudColor(d) {
+  return 'rgb(0,0,0)';
 }
 
 function cloudRotate() {
